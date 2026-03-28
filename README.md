@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>میری کوڈنگ جرنی</title>
+
+  <!-- Distinct typography (Urdu-friendly) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0b1220;
+      --ink: #eaf0ff;
+      --muted: rgba(234,240,255,.78);
+      --line: rgba(234,240,255,.14);
+
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.04);
+
+      --accent: #7cf7d4;
+      --accent2:#8aa8ff;
+      --danger:#ff6b88;
+
+      --shadow: 0 18px 55px rgba(0,0,0,.45);
+      --radius: 18px;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 700px at 85% 10%, rgba(138,168,255,.18), transparent 55%),
+        radial-gradient(900px 600px at 10% 70%, rgba(124,247,212,.14), transparent 55%),
+        radial-gradient(520px 420px at 55% 35%, rgba(255,255,255,.06), transparent 60%),
+        linear-gradient(180deg, #070b14, var(--bg));
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Decorative grid */
+    .bg-grid{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .22;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.10) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at 50% 25%, black 0 55%, transparent 75%);
+    }
+
+    .wrap{
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: clamp(18px, 3vw, 36px);
+    }
+
+    header{
+      width: min(980px, 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 40px rgba(0,0,0,.25);
+      animation: rise .7s ease both;
+    }
+
+    .brand{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .logo{
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(124,247,212,.95), rgba(124,247,212,.15) 55%, transparent 60%),
+        radial-gradient(circle at 70% 65%, rgba(138,168,255,.95), rgba(138,168,255,.16) 55%, transparent 60%),
+        linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      flex: 0 0 auto;
+    }
+
+    .brand-title{
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .brand-title strong{
+      font-weight: 700;
+      letter-spacing: .2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-title span{
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    nav{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+
+    .pill{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 13px;
+      text-decoration: none;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .pill:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.07);
+      border-color: rgba(124,247,212,.35);
+    }
+    .pill:active{ transform: translateY(0px) scale(.99); }
+
+    main{
+      width: min(980px, 100%);
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: clamp(14px, 2.6vw, 22px);
+      align-items: start;
+    }
+
+    .panel{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero{
+      padding: clamp(18px, 3.2vw, 30px);
+      position: relative;
+      isolation: isolate;
+      animation: rise .75s ease .08s both;
+    }
+
+    .hero::before{
+      content:"";
+      position: absolute;
+      inset: -2px;
+      background:
+        radial-gradient(500px 260px at 18% 12%, rgba(124,247,212,.14), transparent 60%),
+        radial-gradient(520px 280px at 88% 35%, rgba(138,168,255,.16), transparent 65%);
+      z-index: -1;
+    }
+
+    h1{
+      margin: 0 0 10px 0;
+      font-family: "Noto Nastaliq Urdu", serif;
+      font-weight: 700;
+      font-size: clamp(30px, 3.6vw, 44px);
+      line-height: 1.45;
+      letter-spacing: .2px;
+    }
+
+    p{
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(14px, 1.5vw, 16px);
+      line-height: 1.9;
+    }
+
+    .meta{
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .badge{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      color: rgba(234,240,255,.88);
+    }
+
+    .badge b{
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Contact form */
+    .contact{
+      padding: clamp(18px, 3.2vw, 26px);
+      animation: rise .75s ease .16s both;
+    }
+
+    .contact h2{
+      margin: 0 0 10px 0;
+      font-family: "Noto Nastaliq Urdu", serif;
+      font-weight: 700;
+      font-size: clamp(20px, 2.4vw, 28px);
+      line-height: 1.6;
+    }
+
+    form{
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    label{
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: rgba(234,240,255,.86);
+    }
+
+    input, textarea{
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(10,14,24,.35);
+      color: var(--ink);
+      padding: 12px 12px;
+      outline: none;
+      font: inherit;
+      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+
+    textarea{
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    input:focus, textarea:focus{
+      border-color: rgba(124,247,212,.55);
+      box-shadow: 0 0 0 4px rgba(124,247,212,.12);
+    }
+
+    .actions{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    button{
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 11px 14px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      color: #061018;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 16px 35px rgba(124,247,212,.14);
+      transition: transform .16s ease, filter .16s ease, box-shadow .16s ease;
+    }
+    button:hover{
+      transform: translateY(-1px);
+      filter: saturate(1.05) contrast(1.02);
+      box-shadow: 0 18px 45px rgba(138,168,255,.18);
+    }
+    button:active{ transform: translateY(0px) scale(.99); }
+
+    .hint{
+      color: rgba(234,240,255,.72);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    footer{
+      width: min(980px, 100%);
+      margin-top: 16px;
+      padding: 14px 4px 6px;
+      color: rgba(234,240,255,.62);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      animation: fade .9s ease .25s both;
+    }
+
+    .sr-only{
+      position:absolute;
+      width:1px;height:1px;
+      padding:0;margin:-1px;
+      overflow:hidden;clip:rect(0,0,0,0);
+      white-space:nowrap;border:0;
+    }
+
+    @keyframes rise{
+      from{ opacity: 0; transform: translateY(10px); }
+      to{ opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade{
+      from{ opacity: 0; }
+      to{ opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px){
+      main{ grid-template-columns: 1fr; }
+      header{ border-radius: 18px; }
+      nav{ justify-content: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <header>
+      <div class="brand" aria-label="سائٹ کی شناخت">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="brand-title">
+          <strong>میری کوڈنگ جرنی</strong>
+          <span>سادہ HTML + CSS صفحہ</span>
+        </div>
+      </div>
+
+      <nav aria-label="پرائمری نیویگیشن">
+        <a class="pill" href="#home">ہوم</a>
+        <a class="pill" href="#contact">رابطہ</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home" class="panel hero" aria-labelledby="hello-heading">
+        <h1 id="hello-heading">ہیلو، دنیا!</h1>
+        <p>میں کوڈنگ سیکھ رہا ہوں۔</p>
+
+        <div class="meta" aria-label="چھوٹی معلومات">
+          <div class="badge"><b>HTML</b> بنیادی ڈھانچہ</div>
+          <div class="badge"><b>CSS</b> اسٹائل اور لےآؤٹ</div>
+        </div>
+      </section>
+
+      <aside id="contact" class="panel contact" aria-labelledby="contact-heading">
+        <h2 id="contact-heading">رابطہ</h2>
+
+        <form>
+          <label>
+            <span>نام</span>
+            <input type="text" name="name" placeholder="اپنا نام لکھیں" autocomplete="name" required>
+          </label>
+
+          <label>
+            <span>ای میل</span>
+            <input type="email" name="email" placeholder="name@example.com" autocomplete="email" required>
+          </label>
+
+          <label>
+            <span>پیغام</span>
+            <textarea name="message" placeholder="اپنا پیغام لکھیں..." required></textarea>
+          </label>
+
+          <div class="actions">
+            <button type="submit">بھیجیں</button>
+            <div class="hint">یہ ایک ڈیمو فارم ہے — ابھی ڈیٹا کہیں محفوظ نہیں ہوگا۔</div>
+          </div>
+        </form>
+      </aside>
+    </main>
+
+    <footer>
+      <div>© <span id="year"></span> — میری کوڈنگ جرنی</div>
+      <div class="hint">Tip: آپ اس فائل کو .html کے طور پر سیو کر کے براوزر میں کھول سکتے ہیں۔</div>
+    </footer>
+  </div>
+
+  <script>
+    // Small enhancement: current year + prevent demo form submission
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const form = document.querySelector('form');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      const original = btn.textContent;
+      btn.textContent = 'موصول ہوگیا (ڈیمو)';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.disabled = false;
+        form.reset();
+      }, 1400);
+    });
+  </script>
+</body>
+</html>
